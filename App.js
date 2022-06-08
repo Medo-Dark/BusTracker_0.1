@@ -9,14 +9,19 @@ import User from './Screens/Main/User/User';
 import SplashScreen from './components/SplashScreen';
 import { Provider } from 'react-redux';
 import { store } from './store';
+import ContactUs from './Screens/Main/User/ContactUs';
+import { View } from 'react-native';
 
 
 
 export default function App() {
 
   const Stack = createNativeStackNavigator();
-  return (
-<Provider store={store} >
+  return (<View style={{flex:1}}>
+    <ContactUs/>
+  </View>
+    );
+{/* <Provider store={store} >
 <NavigationContainer>
                 <Stack.Navigator initialRouteName="SplashScreen">
                  <Stack.Screen name="SplashScreen" component={SplashScreen} options={{
@@ -42,6 +47,5 @@ export default function App() {
                </Stack.Navigator>
     </NavigationContainer>
 
-</Provider>
-  );
+</Provider> */}
   };

@@ -5,13 +5,14 @@ import { Alert } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { useDispatch ,useSelector } from 'react-redux';
 import { setUserLoc , setNearsetStation, getDriverLoc } from './slices/locationReducer';
-import MapView from 'react-native-maps';
+import MapView, { Animated } from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
 import gglApiKey from './gglApiKey';
 import AppNav from './navigation/AppNav';
 import { setTargetedBus  } from './slices/locationReducer';
+import { useNavigation } from '@react-navigation/native';
 
 
 
@@ -25,6 +26,7 @@ import { setTargetedBus  } from './slices/locationReducer';
     const STATIONS = useSelector((state)=>state.loc.STATIONS);
     const BusPath = useSelector((state)=>state.loc.BusPath);
     console.log('------------------BUS PATH---------------------',BusPath);
+    const navigation = useNavigation()
 
  const {name}= targetedBus;
     const routeRef = useRef();
@@ -43,21 +45,33 @@ import { setTargetedBus  } from './slices/locationReducer';
     })
 
 
-    
-    useEffect(()=>{
-       if (!nearestStation || !userLoc) {return ;}
-       console.log(nearestStation);
 
-       routeRef.current.fitToSuppliedMarkers(["User",'nearsetStation'],{
-             edgePadding:{top:50,right:50,bottom:50,left:50}});
+    
+    useEffect( ()=>{
+       if (!nearestStation || !userLoc) {return ;}
+
+
+     if (Platform.OS=='android') {
+       routeRef.current.fitToCoordinates([
+         userLoc,
+         {
+           latitude: nearestStation.latitude,
+           longitude: nearestStation.longitude,
+         },
+       ],{edgePadding:{top:50,right:50,bottom:50,left:50},animated:true})
+     }else{
+          routeRef.current.fitToSuppliedMarkers(["User",'nearsetStation'],{
+            edgePadding:{top:50,right:50,bottom:50,left:50},animated:true});
+     }
 
        }
     ,[nearestStation])
 
        useEffect(()=>{
         if (!targetedBus.location||!userLoc) {return ;}
-        routeRef.current.fitToSuppliedMarkers(["User",'Bus'],{
-              edgePadding:{top:50,right:50,bottom:50,left:50}});
+        routeRef.current.fitToCoordinates([targetedBus.location,userLoc],{
+              edgePadding:{top:50,right:50,bottom:50,left:50},            
+            });
               
         }
         ,[name])
@@ -67,15 +81,18 @@ import { setTargetedBus  } from './slices/locationReducer';
     useEffect(() => {
       (async () => {
         let { status } = await Location.requestForegroundPermissionsAsync();
+        console.log('-----------------status',status)
         if (status !== 'granted') {
-          Alert.alert('Permission to access location was denied');
+          Alert.alert('','Permission to access location was denied');
+          navigation.replace('SplashScreen');
           return;
         }
       try {
         let loco = await Location.getCurrentPositionAsync();
         dispatch(setUserLoc({latitude:loco.coords.latitude,longitude:loco.coords.longitude}));
       } catch (error) {
-        Alert.alert("coudnt fetch user location please try again");
+        Alert.alert("GPS FEATCHERS R Highly important for our app functionality Please activate it");
+        navigation.replace('SplashScreen');
         return;
       }
     })();
@@ -115,7 +132,7 @@ import { setTargetedBus  } from './slices/locationReducer';
         
        {targetedBus.isMoving &&  <Marker
           coordinate={targetedBus.location}
-          identifier={"Bus"}
+          identifier='Bus'
 
         />}
            
@@ -129,7 +146,7 @@ import { setTargetedBus  } from './slices/locationReducer';
         longitude: userLoc.longitude,
         }}
         title={"U R HERE!"}
-        identifier={"User"}
+        identifier='User'
         description={"this is your actuel loc.made by the one and only Mohamed Darkaoui"}
         />}
          {nearestStation && <Marker  
@@ -138,7 +155,7 @@ import { setTargetedBus  } from './slices/locationReducer';
         longitude: nearestStation.longitude,
         }}
         title={'Station'}
-        identifier={"nearsetStation"}
+        identifier='nearsetStation'
         description={nearestStation.name}
         />}
 
