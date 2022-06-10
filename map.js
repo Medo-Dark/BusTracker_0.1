@@ -91,7 +91,7 @@ import { useNavigation } from '@react-navigation/native';
         let loco = await Location.getCurrentPositionAsync();
         dispatch(setUserLoc({latitude:loco.coords.latitude,longitude:loco.coords.longitude}));
       } catch (error) {
-        Alert.alert("GPS FEATCHERS R Highly important for our app functionality Please activate it");
+        Alert.alert('',"GPS FEATCHERS R Highly important for our app functionality Please activate it");
         navigation.replace('SplashScreen');
         return;
       }
@@ -99,8 +99,7 @@ import { useNavigation } from '@react-navigation/native';
   }, []);
      
   return (
-    <View>
-        {
+    <View style={{alignItems:'center'}} ><View>{
         !userLoc.longitude? <ActivityIndicator size={"large"} color={"red"}/>:
         <MapView 
         ref={routeRef}
@@ -161,10 +160,11 @@ import { useNavigation } from '@react-navigation/native';
 
         </MapView>
         }
-      {userLoc.longitude && <View style={styles.list}>
-          <AppNav  />
-      </View>}
-    </View>
+     
+      <View style={styles.list}>
+          {userLoc.latitude && <AppNav  />}
+      </View>
+      </View></View>
   )
     }
 
@@ -176,6 +176,11 @@ const styles = StyleSheet.create({
       },
     list:{
       flex:1
+    },
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
     }
 })
 export default Map;

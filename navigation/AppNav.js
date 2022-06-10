@@ -13,28 +13,10 @@ const Stack = createNativeStackNavigator();
 
 const AppNav = ()=>{
     return(
-
     <Stack.Navigator initialRouteName='Stations'>
-        <Stack.Screen name= "Stations" component={StationsList} options={{
-           headerStyle:style.header,
-           headerTitleStyle:style.title
-        
-        }
-        } />
-        <Stack.Screen name="Bus" component={BusList} options={{
-           headerStyle:style.header,
-           headerTitleStyle:style.title,
-           animation:'slide_from_right'
-        
-        }
-        }/>
-         <Stack.Screen name="Copies" component={BusCopiesList} options={{
-           headerStyle:style.header,
-           headerTitleStyle:style.title,
-           animation:'slide_from_right'
-        
-        }
-        }/>
+        <Stack.Screen name= "Stations" component={StationsList} options={{headerShown: false}}/>
+        <Stack.Screen name="Bus" component={BusList} options={{headerShown: false}}/>
+         <Stack.Screen name="Copies" component={BusCopiesList}options={{headerShown: false}}/>
         </Stack.Navigator>
 )
 

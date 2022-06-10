@@ -46,14 +46,21 @@ const image = require('../assets/bus.jpg')
         }
       }
    
+
+
     useEffect (()=>{
       console.log('in useEffect')
       getData();
 
     },[])
     useEffect(()=>{
-      if (targetedUser) {
-        navigation.replace(targetedUser.role);
+      const myTimeout = setTimeout(()=>{
+        if (targetedUser) {
+          navigation.replace(targetedUser.role)
+        }
+        }, 5000);
+      return()=>{
+        clearTimeout(myTimeout)
       }
     },[isFetching]);
   return (

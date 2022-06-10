@@ -41,7 +41,7 @@ const ContactUs = () => {
   )
 }
 
-export default ContactUs
+export default ContactUs;
 
 let styles = StyleSheet.create({
     Input:{
@@ -52,10 +52,8 @@ let styles = StyleSheet.create({
         height:55,
         borderRadius:50,
         margin:10,
-        left:22,
-        padding:10,
         textAlignVertical: "top",
-        padding:19
+        padding:19,
         
     }
 })
