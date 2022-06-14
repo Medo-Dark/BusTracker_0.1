@@ -11,7 +11,7 @@ import { Provider } from 'react-redux';
 import { store } from './store';
 import ContactUs from './Screens/Main/User/ContactUs';
 import { View } from 'react-native';
-
+import ForgetPassword from './Screens/Main/User/forgotPassword';
 
 
 export default function App() {
@@ -30,6 +30,11 @@ export default function App() {
         
         }} />
                  <Stack.Screen name="Register" component={Register} options={{
+                   headerShown: false
+        
+        }}/>
+
+                  <Stack.Screen name="Forgot" component={ForgetPassword} options={{
                    headerShown: false
         
         }}/>

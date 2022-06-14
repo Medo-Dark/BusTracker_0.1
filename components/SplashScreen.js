@@ -68,7 +68,6 @@ const image = require('../assets/bus.jpg')
       
       <View style = {styles.header}></View>
             <View style = {styles.header1}></View>
-
             <View style={styles.img}>
                 <Image source = {image}/>
             </View>

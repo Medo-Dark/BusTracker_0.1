@@ -97,18 +97,16 @@ const Register = props => {
               </View>
               <Text style={styles.slogo}>Create your Account now to enjoy  </Text>
               <Text style={styles.slogo1}>Our amazing services</Text>
-            
-            
-           </View>
-           <View style = {styles.header1}>
-             <Text style={styles.title}>Create Account</Text>
-           </View>
-
-           <View style={styles.fot} >
-                <Text
+              <Text
+                    style={[styles.slogo,{color:'hotpink',fontSize:19,left:70,top:-6}]}
                     onPress={() => props.navigation.replace("Login")} >
                     Already have an account? SignIn.
                 </Text>
+           </View>
+           <View style = {styles.header1}>
+             <Text style={styles.title}>Create Account</Text>
+
+                
             </View>
 
             </View>
@@ -190,7 +188,7 @@ const styles = StyleSheet.create({
     btn:{
         width:220,
         height:40,
-        backgroundColor:'#ffff',
+        backgroundColor:'#0D6CFC',
         borderRadius: 50,
         left:95,
         top:30,

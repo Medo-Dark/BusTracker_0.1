@@ -54,9 +54,9 @@ const StationsList = props => {
 
   return (
     <View>
-        <Button title={"get Nearest stations"} onPress={async ()=>{
+        {!visible&&<Button title={"get Nearest stations"} onPress={async ()=>{
             dispatch( getStations());
-            }} />
+            }} />}
         {visible && isFetching ? <ActivityIndicator size={'large'} color={'red'} /> : <FlatList data={STATIONS} renderItem={itemData=>{
             return(
                 <TouchableOpacity style={styles.grid}

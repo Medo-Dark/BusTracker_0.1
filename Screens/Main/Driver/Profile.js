@@ -7,10 +7,14 @@ import { backToOldDays } from '../../../slices/userSlice';
 //import {setLocalisation} from './Map';
 import { useDispatch, useSelector } from 'react-redux';
 import { Alert } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import EditProfile from './EditProfile';
+
 
 
 export default function Profile({navigation}) {
-  const disptach = useDispatch();
+   const [isVisble,setIsVisble] = useState(false);
+   const disptach = useDispatch();
    const userId = useSelector((state)=>state.user.userId);
    const targetedUser = useSelector((state)=>state.user.targetedUser);
    console.log(userId);
@@ -34,114 +38,78 @@ export default function Profile({navigation}) {
 
   
   return (
-    <View >
-      
-      <View style = {styles.header}></View>
-      <Text style={styles.username}> {targetedUser.userName} </Text>
-      <View style={styles.edit}>
-        <Button title='Edit' color='#fff' onPress={() => {
-          navigation.navigate('EditProfile')
+    <View style={styles.back}>
+    {isVisble&&
+      <EditProfile goBack={()=>{
+        setIsVisble(false);
        }} />
+    }
+    {!isVisble &&<View style={{top:200,position:'relative'}}>
+      <Ionicons style={styles.icon} name="person-circle-outline" size={200} color="#000" />
+      <Text style={styles.username}>{targetedUser.userName}</Text>
+      <Text style={styles.details}> User Details </Text>
+      <Text style={styles.detailsitems}> Email : {targetedUser.email} </Text>
+      <Text style={styles.detailsitems}> Role :{targetedUser.role} </Text>
+      <View style={styles.btn}>
+        <Button  title='Edit Profile' onPress={()=>{setIsVisble(true)}} />
       </View>
-      <View style={styles.logout}>
-        <Button title='Logout' onPress={Logout} />
-      </View>
-      <Text style={styles.driver}></Text>
-      <View  style={styles.list}>
-        <Text>Name: {targetedUser.userName}</Text>
-        <Text>Email : {targetedUser.email}</Text>
-        <Text>Profile : {targetedUser.role} </Text>
-      </View>
-
-      <View style={styles.Share}>
-        <Button title='Share Your localisation' color='#fff'
-        onPress={{}} />
+      <View style={{...styles.btn,top:-30}}>
+        <Button  title='Log out' onPress={Logout} />
       </View>
       
+    </View>}
     </View>
     
   )
 }
 
 const styles = StyleSheet.create({
-    header:{
-        width:415,
-        height: 220,
-        backgroundColor: '#0D6CFC',
-        zIndex:1,
-        borderBottomRightRadius:250,
-        
-    },
-
-    img:{
-      width:150,
-      height:150,
-      top:-70,
-      left:130,
-      borderRadius:75,
-      zIndex:1,
-    },
-
-    edit:{
-      backgroundColor:"#0D6CFC",
-      width:100,
-      borderRadius:50,
-      top:-40,
-      left:100,
-      shadowColor:'black',
-      shadowOpacity:0.25,
-      shadowRadius:6,
-      shadowOffset:{width: 1, height:2 },
-      fontSize:32,
-      elevation:5,
-    },
-
-    logout:{
-      width:100,
-      backgroundColor:"#fff",
-      borderRadius:50,
-      borderWidth:2,
-      top:-77,
-      left:210,
-      shadowColor:'black',
-      shadowOpacity:0.25,
-      shadowRadius:6,
-      shadowOffset:{width: 1, height:2 },
-      fontSize:32,
-      elevation:5,
-      
-    },
-    username:{
-      top:-55,
-      left:160,
-      fontSize:16,
-      
-    },
-
-    driver:{
-      top:-55,
-      left:145,
-      fontSize:22,
-    },
-
-    list:{
-      left:100,
-      top:-50,
-    },
-
-    Share:{
-      backgroundColor:"#0D6CFC",
-      width:300,
-      borderRadius:50,
-      
-      left:60,
-      shadowColor:'black',
-      shadowOpacity:0.25,
-      shadowRadius:6,
-      shadowOffset:{width: 1, height:2 },
-      fontSize:32,
-      elevation:5,
-    }
+  back:{
+    backgroundColor:'#ECE9E6',
+    width:415,
+    height:700,
+    borderRadius:50,
+    position:'relative'
+},
+icon:{
+    top:-110,
+    left:100,
+},
+username:{
+    top:-120,
+    left:140,
+    fontSize:24,
+    fontWeight:'bold',
+},
+details:{
+    top:-70,
+    fontSize:24,
+    fontWeight:'bold',
+    color:'#0D6CFC',
+    left:30,
+},
+detailsitems:{
+    fontSize:20,
+    fontWeight:'bold',
+    left:60,
+    margin:9,
+    top:-40,
+},
+btn:{
+    top:80,
+    left:90,
+    margin:8,
+    backgroundColor:'#0D6CFC',
+    width:220,
+    borderRadius:50,
+    shadowColor:'black',
+    shadowOpacity:0.25,
+    shadowRadius:6,
+    shadowOffset:{width: 1, height:2 },
+    fontSize:32,
+    elevation:5,
+}
+    
 
     
     

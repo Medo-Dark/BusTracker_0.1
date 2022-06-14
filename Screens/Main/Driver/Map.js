@@ -1,18 +1,23 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View ,Dimensions ,TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react';
 import { setUserLoc } from '../../../slices/locationReducer';
 import { useDispatch, useSelector } from 'react-redux';
 import * as Location from 'expo-location';
 import { updateUserLoc } from '../../../slices/locationReducer';
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-const Map = () => {
+
+
+
+const Map = props => {
   const dispatch = useDispatch();
   const [prevLoc,setPrevloc] = useState(null);
   const userLoc = useSelector((state)=>state.loc.userLoc);
 console.log('--------------------------Userloc',userLoc);
   const [send,setSend]=useState(false);
   const targetedUser = useSelector((state=>state.user.targetedUser));
-  //const [move ,setMove]= useState(0.1);
+
 
 
 
@@ -27,6 +32,9 @@ console.log('--------------------------Userloc',userLoc);
     }
   }
 
+  const ShareLoc=()=>{
+  setSend((send)=>!send);
+  }
 
   useEffect(() => {
     (async () => {
@@ -40,11 +48,13 @@ console.log('--------------------------Userloc',userLoc);
 }, []);
 
 useEffect(()=>{
+  if (!send) {
+    return;
+  }
   const interval = setInterval(()=>{
     setPrevloc(userLoc);
     GetUserLoc();
-      console.log('moooooooooooooooooooooooooooore');
-    setSend(true);
+    console.log('moooooooooooooooooooooooooooore');
   },4000);
   return()=>clearInterval(interval)
 })
@@ -53,23 +63,71 @@ useEffect(()=>{
   console.log('its in',prevLoc);
   
   if (send) {
-  if (prevLoc &&  Math.abs(prevLoc.latitude-userLoc.latitude)>0.00000001 || Math.abs( prevLoc.longitude-userLoc.longitude)>0.00000001 ) {
+  if (prevLoc &&  (Math.abs(prevLoc.latitude-userLoc.latitude)>0.00000001 || Math.abs( prevLoc.longitude-userLoc.longitude)>0.00000001) ) {
       console.log('it did change');  
       dispatch(updateUserLoc({targetedUser,userLoc}));
       setSend(false);
-     // setMove((move)=>move+0.1)
   }
   }
 },[userLoc])
-
-
+    
   return (
-    <View>
-      <Text>Map</Text>
+    
+    <View style={styles.map}>
+    <MapView
+    provider={PROVIDER_GOOGLE}
+    style={styles.map}       
+    initialRegion={{          
+      latitude: 35.7595,          
+      longitude: -5.8340,          
+      latitudeDelta: 0.0922,          
+      longitudeDelta: 0.0421        
+    }}        
+    showsUserLocation={true}
+    />
+    <TouchableOpacity style={styles.bar}
+    onPress={ShareLoc}>
+    <Text  style={{...styles.txt,color:send?'#0D6CFC':'#000'}} >  {!send?'Share your Location!':'Stop Sharing!!'}</Text>
+    <Ionicons style={styles.icon} name="toggle" size={30} color={send?'#0D6CFC':'#000'} />
+    
+    </TouchableOpacity>
     </View>
+
+
+
+    
+    
   )
 }
 
-export default Map
+const styles = StyleSheet.create({
+  map:{
+  flex:0,
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height,
+  },
+  bar:{
+        height:60,
+        backgroundColor:'#FFFF',
+        top:-200,
+        borderRadius:50,
+        width:300,
+        left:60,
+        
+        
+  },
+  txt:{
+    fontWeight:'bold',
+    color:'#0D6CFC',
+    top:20,
+    left:20,
+  },
 
-const styles = StyleSheet.create({})
+  icon:{
+    left:230,
+    top:-5,
+  }
+  
+})
+
+export default Map;

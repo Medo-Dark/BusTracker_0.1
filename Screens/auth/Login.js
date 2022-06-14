@@ -9,6 +9,7 @@ import { Alert } from 'react-native';
 
 
 
+const logo = require('../../assets/logo.png')
 
 const Login = props =>{
     const dispatch = useDispatch();
@@ -59,176 +60,144 @@ const Login = props =>{
     
     
         
-        return (
-            <View style = {styles.container} >
-                <View style={styles.image}>
- 
-                </View>
-
-              <View style={styles.logo}>
-                
-                <Text style = {styles.logotitle} >BUS </Text>
-                <Text style = {styles.logotitle}>Tarcker </Text>
-              </View>
-                
-              <View style={styles.head}>
+    return (
+        <View style={styles.back}>
+            
+          <View style={styles.img}>
+              <Image source={logo}/>  
+          </View>
+          <View style={styles.text}>
+              <Text style={styles.title}>BUS</Text>
+              <Text style={styles.title}>Tarcker</Text> 
+          </View>
+          <View style={styles.head}>
                 <Text style = {styles.titre}>Login</Text>
-              </View>
-              <View style={styles.items}>
-              <TextInput 
-              placeholder='Email'
-              style={styles.Input}
-              onChangeText={(email) => setEmail(email)}/>
-
-              <TextInput 
-              style={styles.Input}
-              placeholder='Password'
-              secureTextEntry={true}
-              onChangeText={(password) => setPassword(password)}/>
-              </View>
-              
-              <View style={styles.btn}>
-              <Text
-                style={{color:'#0D6CFC'}}
-                    title="Register"
-                    onPress={() => props.navigation.replace("ForgetPassword")} >
-                    Forget your password!.
-                </Text>
+                <Text style={styles.tot}>      To your Account</Text>
+          </View>
+          
+          <View style={styles.items}>
+                  <TextInput 
+                  placeholder='Email'
+                  style={styles.Input}
+                  onChangeText={(email) => setEmail(email)}
+                  />
+    
+                  <TextInput 
+                  style={styles.Input}
+                  placeholder='Password'
+                  secureTextEntry={true}
+                  onChangeText={(password) => setPassword(password)}
+                  />
+          </View>
+    
+          <View style={styles.btn}>
+                  <Text
+                    style={{color:'#ffff'}}
+                        title="Register"
+                        onPress={() => { props.navigation.navigate('Forgot')}} >
+                        Did u fogot ur Password? Click here.
+                  </Text>
             </View>
+    
             <View style={styles.signin} >
-            {isFetching? <ActivityIndicator size={"large"} color={"#0D6CFC"}/> : <Button 
-            onPress={()=>Login({email,password})}
-            color={'#fff'}
-              title="Sign In"/>}
-            
+                <Button onPress={()=>{
+                    if (!email||!password) {
+                        Alert.alert('Message','Make Sure that neither of text fields left empthy')
+                        return;
+                    }
+                    Login({email,password})}}
+                color={'#0D6CFC'}
+                  title="Sign In"/>
             </View>
-            <View style={styles.bar}></View>
-            
-            <View style={styles.register} >
-                <Text
-                style={styles.fot}
-                    title="Register"
-                    onPress={() => props.navigation.replace("Register")} >
+    
+            <View style={styles.footer}>
+                <Text style={styles.footertxt}
+                    onPress={() => props.navigation.navigate("Register")}>
                     Don't have an account? SignUp.
                 </Text>
             </View>
-            
-            </View>
-          )
-    
-  
-}
-
-
-
-const styles = StyleSheet.create({
-    container:{
-        left:70,
-        top:300,
-    },
-    image:{
-        top:-100,
-        left:25,
-    },
-
-    titre:{
-        fontSize: 40,
-        left:75,
-        margin:12,
-        //fontFamily:'bold'   
-    },
-    logo:{
-        top:-200,
-        left:120,
-    },
-    logotitle:{
-        
-        fontSize: 40,
-        margin:0,
-        color:'#0D6CFC'
-    },
-
-    head:{
-        top:-180,
-    },
-
-    fot:{
-        top:-140,
-        color:'#0D6CFC'
-    },
-
-    items:{
-        top:-180,
-    },
-    btn:{
-        width:300,
-        right:-10,
-        top:-180,
-          
-    },
-    signin:{
-        left:25,
-        margin:8,
-        backgroundColor:'#0D6CFC',
-        width:220,
-        top:-150,
-        borderRadius:50,
-        shadowColor:'black',
-        shadowOpacity:0.25,
-        shadowRadius:6,
-        shadowOffset:{width: 1, height:2 },
-        fontSize:32,
-        elevation:5,
-    },
-
-    Input:{
-        borderWidth:2,
-        borderColor:'#0D6CFC',
-        width:300,
-        height:45,
-        borderRadius:50,
-        margin:10,
-        right:22,
-        padding:9,
-    },
-    place:{
-        borderWidth:2,
-        borderColor:'#0D6CFC',
-        width:300,
-        height:45,
-        borderRadius:50,
-        margin:10,
-        right:22,
-        padding:9,
-    },
-    bar:{
-        color:'#0D6CFC',
-        width:100,
-        height:1,
-        
-    },
-    fotter:{
-        top:240,
-        
-    },
-    stut:{
-        fontSize:16,
-        
-    },
-    b1:{
-        fontSize:16,
-        
-    },
-
-    register:{
-        top:220,
-        left:30,
-    },
-
-    splach:{
-        flex:1,
+        </View>
+      )
     }
     
-})
+    const styles = StyleSheet.create({
+        back:{
+            width:415,
+            height:898,
+            backgroundColor:'#0D6CFC',
+        },
+        img:{
+            top:200,
+            left:90,
+        },
+        text:{
+            top:110,
+            left:195,
+        },
+        title:{
+            fontSize: 40,
+            margin:0,
+            color:'#ffff',
+            fontWeight:'bold',
+        },
+    
+        Input:{
+            borderWidth:2,
+            borderColor:'#FFFF',
+            width:300,
+            height:45,
+            borderRadius:50,
+            margin:10,
+            right:22,
+            padding:9,
+            backgroundColor:'#FFFF'
+        },
+        items:{
+            top:150,
+            left:70,
+        },
+        head:{
+            top:150,
+            left:160,
+        },
+        titre:{
+            color:'#ffff',
+            fontSize:36,
+            fontWeight:'bold',
+        },
+        tot:{
+            right:40,
+            color:'#ffff',
+            fontSize:16,
+            marginTop:8,
+            marginBottom:0,
+        },
+        btn:{
+            top:145,
+            left:60,
+        },
+        signin:{
+            left:85,
+            margin:8,
+            backgroundColor:'#ffff',
+            width:220,
+            top:180,
+            borderRadius:50,
+            shadowColor:'black',
+            shadowOpacity:0.25,
+            shadowRadius:6,
+            shadowOffset:{width: 1, height:2 },
+            fontSize:32,
+            elevation:5,
+        },
+        footer:{
+            top:250,
+            left:100,
+        },
+        footertxt:{
+            color:'#ffff',
+    
+        }
+    })
 
 export default Login;

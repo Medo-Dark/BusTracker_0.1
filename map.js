@@ -1,11 +1,11 @@
-import { StyleSheet, Text, View , FlatList , Button,Platform} from 'react-native'
+import { StyleSheet, Text, View , FlatList , Button,Platform} from 'react-native';
 import React , { useState, useEffect ,useRef, memo } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import { ActivityIndicator } from 'react-native';
 import { useDispatch ,useSelector } from 'react-redux';
-import { setUserLoc , setNearsetStation, getDriverLoc } from './slices/locationReducer';
-import MapView, { Animated } from 'react-native-maps';
+import { setUserLoc , setNearsetStation, getDriverLoc, DistanceMatrix } from './slices/locationReducer';
+import MapView from 'react-native-maps';
 import { Dimensions } from 'react-native';
 import { Marker } from 'react-native-maps';
 import MapViewDirections from 'react-native-maps-directions';
@@ -13,6 +13,8 @@ import gglApiKey from './gglApiKey';
 import AppNav from './navigation/AppNav';
 import { setTargetedBus  } from './slices/locationReducer';
 import { useNavigation } from '@react-navigation/native';
+import MarkersList from './components/MarkersList';
+
 
 
 
@@ -24,9 +26,11 @@ import { useNavigation } from '@react-navigation/native';
     const nearestStation = useSelector((state)=>state.loc.nearestStation);
     const targetedBus = useSelector((state)=>state.loc.targetedBus);
     const STATIONS = useSelector((state)=>state.loc.STATIONS);
+    const WAYPOINTS = useSelector((state)=>state.loc.WAYPOINTS);
     const BusPath = useSelector((state)=>state.loc.BusPath);
+    //const [listLOL,setListLOL]= useState([]);
     console.log('------------------BUS PATH---------------------',BusPath);
-    const navigation = useNavigation()
+    const navigation = useNavigation();
 
  const {name}= targetedBus;
     const routeRef = useRef();
@@ -34,11 +38,15 @@ import { useNavigation } from '@react-navigation/native';
 
 
     useEffect(()=>{
-      if (!targetedBus || !targetedBus.isMoving) {
+      if (!targetedBus || !targetedBus.isMoving || !targetedBus.location ) {
         return;
       }
-      const interval = setInterval(()=>{  
+      const interval = setInterval(()=>{
+        if (!targetedBus || !targetedBus.isMoving || !targetedBus.location ) {
+          return;
+        }
         dispatch(getDriverLoc(targetedBus));
+        dispatch(DistanceMatrix({origin:targetedBus,destination:nearestStation}))
           console.log('moooooooooooooooooooooooooooore');
       },4000);
       return()=>clearInterval(interval);
@@ -111,15 +119,18 @@ import { useNavigation } from '@react-navigation/native';
 
         {userLoc && nearestStation && (
          <MapViewDirections
+          lineDashPattern={[1,10]}
           origin={userLoc}
           destination={{latitude:nearestStation.latitude,longitude:nearestStation.longitude}}
           strokeWidth={3}
-          strokeColor={"hotpink"}
+          strokeColor={"black"}
           apikey={gglApiKey}
          />
         )}
         {BusPath && (
          <MapViewDirections
+          waypoints={WAYPOINTS.slice(0,20)}
+          optimizeWaypoints={true}
           origin={BusPath.origin}
           destination={BusPath.destination}
           strokeWidth={3}
@@ -134,10 +145,9 @@ import { useNavigation } from '@react-navigation/native';
           identifier='Bus'
 
         />}
-           
+          {BusPath &&  <MarkersList list={WAYPOINTS} />}
 
-   
-
+          
 
         {userLoc?.longitude && <Marker 
         coordinate={

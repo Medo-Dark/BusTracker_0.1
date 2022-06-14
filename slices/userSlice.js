@@ -15,8 +15,50 @@ const initialState = {
   }
 
 
+
+
+
+  export const resetPassword = createAsyncThunk(
+    'user/resetPassword',
+    async (email, thunkAPI) => {
+      try {
+        console.log("sign up",email)
+        const response = await fetch(
+          'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBXjLG9cbFEGaVf-wrgxCbenpKIFsHk0EI',
+          {
+            method: 'POST', 
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              requestType:"PASSWORD_RESET",
+              email:email,
+            }),
+          }
+        );
+        let data = await response.json();
+
+        if (response.status === 200) {
+          
+          return data;
+          
+        } else {
+          
+          return thunkAPI.rejectWithValue(data);
+        }
+      } catch (e) {
+        
+        console.log('Error', e.response.data);
+        return thunkAPI.rejectWithValue(e.response.data);
+      }
+    }
+    );
+
+
+
+
   
-  
+
   
   export const signupUser = createAsyncThunk(
     'user/signupUser',
@@ -243,7 +285,7 @@ export const userSlice = createSlice({
          console.log('----------------------------------------------',payload[uid]);
          state.targetedUser={...payload[uid],uid:uid[0]};
       } catch (error) {
-        Alert.alert('there is no data about this user')
+        Alert.alert('there is no data about this user');
       }
         state.userId = null;
         state.gotUser=true;
@@ -253,7 +295,7 @@ export const userSlice = createSlice({
         console.log('fetchUserBytoken ReJected',payload);
         state.isFetching = false;
         state.isError = true;
-        state.errorMessage='coudnt get user data'
+        state.errorMessage='coudnt get user data';
       },
       [CreateUser.pending]: (state) => {
         state.isFetching = true;
@@ -267,7 +309,15 @@ export const userSlice = createSlice({
         console.log('REJECTED CREATE USER');
         state.isFetching = false;
         state.isError = true;
-        state.errorMessage = payload.error.message;
+        state.errorMessage = 'REJected creatin user';
+      },
+      [resetPassword.fulfilled]: (state) => {
+        state.isSuccess = true;
+      },
+      [resetPassword.rejected]: (state , { payload }) => {
+        console.log('------------payload',payload)
+        state.errorMessage = payload.error.errors[0].message;
+        state.isError = true;
       }
   },
 })
