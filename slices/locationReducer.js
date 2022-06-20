@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { Alert } from "react-native";
-import Station from "../models/station";
+import gglApiKey from "../gglApiKey";
 
 const initialState = {
   userLoc: {},
@@ -57,7 +57,7 @@ export const DistanceMatrix = createAsyncThunk(
     try {
       //code fetch driver loc from the database
       const response = await fetch(
-        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.location.latitude},${origin.location.longitude}&destinations=${destination.latitude},${destination.longitude}&key=AIzaSyBXjLG9cbFEGaVf-wrgxCbenpKIFsHk0EI`,
+        `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.location.latitude},${origin.location.longitude}&destinations=${destination.latitude},${destination.longitude}&key=${gglApiKey}`,
         {
           method: "GET",
           headers: {
@@ -109,7 +109,7 @@ export const getDriverLoc = createAsyncThunk(
 
 export const updateUserLoc = createAsyncThunk(
   "loc/updateUserLoc",
-  async ({ targetedUser, userLoc }, thunkAPI) => {
+  async ({ targetedUser, userLoc ,send }, thunkAPI) => {
     console.log(targetedUser, userLoc, "in Update");
     try {
       const response = await fetch(
@@ -121,7 +121,7 @@ export const updateUserLoc = createAsyncThunk(
           },
           body: JSON.stringify({
             location: userLoc,
-            isMoving: true,
+            isMoving: send,
           }),
         }
       );
@@ -281,11 +281,14 @@ export const locationReducer = createSlice({
     [getDriverLoc.pending]: (state) => {},
     [getDriverLoc.fulfilled]: (state, { payload }) => {
       try {
+       const index= state.DRIVERS.indexOf((driver)=>driver.id == state.targetedBus.id);
         state.targetedBus = { ...state.targetedBus, location: payload };
         console.log(
           state.targetedBus,
           "==================DA TARGETED BUS======================"
         );
+        state.DRIVERS[index]= state.targetedBus;
+        console.log(state.DRIVERS[index],'--------------DADadADADADAD----------------');
       } catch (error) {
         Alert.alert("somethin went wrong in getDriverLoc");
       }

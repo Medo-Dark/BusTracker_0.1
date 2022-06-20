@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { Alert } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import gglApiKey from "../gglApiKey";
 
 const initialState = {
     userName:"",
@@ -11,7 +12,8 @@ const initialState = {
     gotUser:false,
     errorMessage: "",
     userId:null,
-    targetedUser:null
+    targetedUser:null,
+    rating:[]
   }
 
 
@@ -24,7 +26,7 @@ const initialState = {
       try {
         console.log("sign up",email)
         const response = await fetch(
-          'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyBXjLG9cbFEGaVf-wrgxCbenpKIFsHk0EI',
+          `https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=${gglApiKey}`,
           {
             method: 'POST', 
             headers: {
@@ -66,7 +68,7 @@ const initialState = {
       try {
         console.log("sign up",email,password)
         const response = await fetch(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBXjLG9cbFEGaVf-wrgxCbenpKIFsHk0EI',
+          `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${gglApiKey}`,
           {
             method: 'POST', 
             headers: {
@@ -140,7 +142,6 @@ const initialState = {
     )
  
     const storeData = async (userId) => {
-      console.log('StoreData',userId);
       try {
         const jsonValue = JSON.stringify(
           {
@@ -160,7 +161,7 @@ const initialState = {
     async ({ email, password }, thunkAPI) => {
       try {
         const response = await fetch(
-          'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBXjLG9cbFEGaVf-wrgxCbenpKIFsHk0EI',
+          `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${gglApiKey}`,
           {
             method: 'POST',
             headers: {
@@ -226,6 +227,22 @@ const initialState = {
   );
 
 
+  const storeDat = async (rating) => {
+    console.log('-----------RaTing',rating);
+    try {
+      const jsonValue = JSON.stringify(
+        rating
+      )
+      await AsyncStorage.setItem('Rating', jsonValue);
+
+    } catch (e) {
+     Alert.alert('Coudnt Store Rating');
+    }
+  }
+
+
+
+
 
 export const userSlice = createSlice({
   name: "user",
@@ -241,6 +258,13 @@ export const userSlice = createSlice({
       state.isSuccess = false;
       state.isFetching = false;
        return state;
+    },
+    setRating:(state,{payload})=>{
+      state.rating.push(payload);
+      storeDat(state.rating);
+    },
+    getRating:(state,{payload})=>{
+      state.rating = payload;
     },
   },
   extraReducers: {
@@ -264,13 +288,12 @@ export const userSlice = createSlice({
         state.userId = payload.localId;
         state.isFetching = false;
         state.isSuccess = true;
-        return state;
       },
       [loginUser.rejected]: (state, { payload }) => {
         console.log('payload', payload);
         state.isFetching = false;
         state.isError = true;
-        state.errorMessage = payload.error.message;
+        state.errorMessage = payload.error.errors.message;
       },
       [loginUser.pending]: (state) => {
         state.isFetching = true;
@@ -322,5 +345,5 @@ export const userSlice = createSlice({
   },
 })
 
-export const { clearState , backToOldDays } = userSlice.actions;
+export const { clearState , backToOldDays ,setRating ,getRating} = userSlice.actions;
 export const userSelector = state => state.user;
